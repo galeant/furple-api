@@ -20,7 +20,12 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
+        'status',
+        'role',
+        'google_token',
+        'facebook_token',
     ];
 
     /**
@@ -28,10 +33,10 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    // protected $hidden = [
+    //     'password',
+    //     'remember_token',
+    // ];
 
     /**
      * The attributes that should be cast.
@@ -41,4 +46,17 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function hasFriends() // Mengundang menjadi teman
+    {
+        return $this->belongsToMany(User::class, 'friendship', 'user_id', 'friend_id')
+            ->withPivot('status');
+    }
+
+    public function belongFriends() // Di undang menjadi teman
+    {
+        return $this->belongsToMany(User::class, 'friendship', 'friend_id', 'user_id')
+            ->withPivot('status');
+    }
 }
