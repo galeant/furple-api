@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Enums{namespace};
+
+enum {name}: {returnType}
+{
+    case Default = {dummy};
+
+    public static function getRandomData()
+    {
+        $rand = rand(0, (count(self::cases()) - 1));
+
+        return self::cases()[$rand];
+    }
+}
