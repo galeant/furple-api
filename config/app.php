@@ -212,4 +212,5 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    'exp_verification_token' => env('EXP_VERIFICATION_TOKEN', 60), // 1 Menit
 ];

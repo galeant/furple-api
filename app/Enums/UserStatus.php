@@ -16,4 +16,14 @@ enum UserStatus: int
 
         return self::cases()[$rand];
     }
+
+    public static function getAllKey()
+    {
+        return array_column(self::cases(), 'name');
+    }
+
+    public static function getAllValue()
+    {
+        return array_column(self::cases(), 'value');
+    }
 }

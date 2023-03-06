@@ -18,45 +18,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'firstname',
+        'lastname',
+        'birthday',
+        'gender',
         'email',
         'phone',
         'password',
         'status',
-        'role',
-        'google_token',
-        'facebook_token',
+        'role'
     ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    // protected $hidden = [
-    //     'password',
-    //     'remember_token',
-    // ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-
-    public function hasFriends() // Mengundang menjadi teman
-    {
-        return $this->belongsToMany(User::class, 'friendship', 'user_id', 'friend_id')
-            ->withPivot('status');
-    }
-
-    public function belongFriends() // Di undang menjadi teman
-    {
-        return $this->belongsToMany(User::class, 'friendship', 'friend_id', 'user_id')
-            ->withPivot('status');
-    }
 }

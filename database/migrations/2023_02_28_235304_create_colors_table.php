@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('friendship', function (Blueprint $table) {
-            $table->bigInteger('user_id');
-            $table->bigInteger('friend_id');
-            $table->unsignedInteger('status');
+        Schema::create('colors', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
         });
     }
 
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('friendeship');
+        Schema::dropIfExists('colors');
     }
 };

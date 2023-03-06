@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('social-login/{provider}', [AuthController::class, 'socialLogin'])->name('social-login');
+Route::get('social-login/{provider}/callback', [AuthController::class, 'socialLoginCallback'])->name('social-callback');
+
+Route::post('register', [AuthController::class, 'register'])->name('register');
+Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::get('verification/{token}', [AuthController::class, 'verification'])->name('verification');
+Route::post('forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('profile', [AuthController::class, 'profile'])->name('profile');
+    Route::post('update-profile', [AuthController::class, 'updateProfile'])->name('update-profile');
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 });

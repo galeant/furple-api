@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Type;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -16,25 +17,27 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $array =  range(1, 20000);
-    dd($array);
-    DB::table('block')->insert([
-        'user_id' => 
-    ])
-    $data = User::where('id', '!=', 1)->with(['hasFriends' => function ($q) {
-        $q->where('id', 1);
-    }])
-        ->with([
-            'belongFriends' => function ($q) {
-                $q->where('id', 1);
-            }
-        ])->get()->toArray();
-    dd($data);
+    dd(__('message.register'));
+    return __('message.register');
+    // $array =  range(1, 20000);
+    // dd($array);
+    // DB::table('block')->insert([
+    //     'user_id' =>
+    // ])
+    // $data = User::where('id', '!=', 1)->with(['hasFriends' => function ($q) {
+    //     $q->where('id', 1);
+    // }])
+    //     ->with([
+    //         'belongFriends' => function ($q) {
+    //             $q->where('id', 1);
+    //         }
+    //     ])->get()->toArray();
+    // dd($data);
 
-    $friend = User::where(function ($q) {
-        $q->whereRelation('hasFriends', 'id', 1)
-            ->orWhereRelation('belongFriends', 'id', 1);
-    })->get();
+    // $friend = User::where(function ($q) {
+    //     $q->whereRelation('hasFriends', 'id', 1)
+    //         ->orWhereRelation('belongFriends', 'id', 1);
+    // })->get();
     // dd($friend);
     // dd($data);
     return view('welcome');

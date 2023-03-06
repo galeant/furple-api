@@ -1,27 +1,22 @@
 <?php
 
-namespace App\Service;
+namespace App\Services;
 
-use App\Enums\UserCreateFrom;
 use App\Enums\UserStatus;
 use App\Helpers\General;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Validation\UnauthorizedException;
 
 class AuthService
 {
     public function login($request, $role)
     {
-        $user = User::where([
-            'email' => $request->email,
-            'role' => $role,
-        ])->first();
-
-        if (!$user) {
-            throw new UnauthorizedException();
-        }
+        $user = User::where('role', $role->value)
+            ->where(function ($q) use ($request) {
+                $q->where('email', $request->email)
+                    ->orWhere('phone', General::parsePhoneNumber($request->phone));
+            })->firstOrFail();
 
         if (Hash::check($request->password, $user->password)) {
             return $user;
@@ -29,31 +24,26 @@ class AuthService
         throw new \Exception('Wrong password');
     }
 
-    public function registerByWeb($request, $role)
+    public function register($request, $role)
     {
-        $referalCode = Str::random(4);
-        while (User::where('referal_code', $referalCode)->exists()) {
-            $referalCode = Str::random(4);
-        }
-
-        $user = User::updateOrCreate([
+        return User::updateOrCreate([
             'email' => $request->email,
-        ], [
-            'name' => $request->name,
             'phone' => General::parsePhoneNumber($request->phone),
+        ], [
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'birthday' => $request->birthday,
+            'gender' => $request->gender,
             'role' => $role,
             'password' => Hash::make($request->password),
             'status' => UserStatus::NotVerified,
-            'referal_code' => $referalCode,
         ]);
-
-        return $user;
     }
 
     public function verification($payload)
     {
         $user = User::where([
-            'id' => $payload->id,
+            'id' => $payload['user_id'],
         ])->firstOrfail();
         $user->update([
             'status' => UserStatus::Active,
@@ -65,9 +55,12 @@ class AuthService
     public function updateProfile($user, $request)
     {
         $fill = [
-            'name' => $request->name,
-            'phone' => $request->phone,
             'email' => $request->email,
+            'phone' => General::parsePhoneNumber($request->phone),
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'birthday' => $request->birthday,
+            'gender' => $request->gender,
         ];
         if ($request->filled('password')) {
             $fill['password'] = Hash::make($request->password);
@@ -79,7 +72,16 @@ class AuthService
 
     public function forgotPassword($email)
     {
-        return User::where('email', $email)->firstOrFail();
+        $user = User::where('email', $email)->firstOrFail();
+        $password = Str::random(12);
+        $user->update([
+            'password' => Hash::make($password),
+        ]);
+
+        return [
+            'name' => $user->name,
+            'password' => $password,
+        ];
     }
 
     public function socialLogin($socialAuth, $provider, $role)
